@@ -130,7 +130,12 @@ int expression_calculate(
 	} else if (strcmp(this->type, "fxfxfxx") == 0) {
 		*result = fraction_op(f, a, fraction_op(g, b, fraction_op(h, c, d)));
 	} else {
-		printf("INTERNAL_ERROR: expression_calculate. strlen(expr->type), expr->type == %ld, %s\n", strlen(this->type), this->type);
+		printf(
+			"INTERNAL_ERROR:"
+			"expression_calculate. strlen(expr->type), expr->type == %ld, %s\n",
+			
+			strlen(this->type), this->type
+		);
 		expression_print(this);
 	}
 

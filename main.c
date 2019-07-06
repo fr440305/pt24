@@ -5,19 +5,34 @@
 #include <libpt24/libpt24.h>
 
 /* #define CONFIG_NOERR 0 */
-// starts from 1.
-
 #define ERR_CONFIG_ARG_NOT_ENOUGH 1
 #define ERR_CONFIG_ARG_UNREGONIZABLE 2
 #define ERR_EXPR_TOO_LONG 3
 
 #define PT24_HELP\
-	"Help string.\n"\
-	"Another line.\n"\
-	"End of help.\n"
+	"\n"\
+	"PT24 is a 24-game solver.\n"\
+	"\n"\
+	"SYNOPSIS\n"\
+	"\n"\
+	"    pt24 [-parenthesis |\n"\
+	"          -postfix |\n"\
+	"          -prefix |\n"\
+	"          -sexpression ] <int> <int> <int> <int>\n"\
+	"\n"\
+	"    pt24 (-h | -v)\n"\
+	"\n"\
+	"OPTIONS\n"\
+	"\n"\
+	"    -h            Show helps\n"\
+	"    -v            Show the current version\n"\
+	"    -parenthesis  Print the result with all the parenthesis\n"\
+	"    -postfix      Print in postfix expression\n"\
+	"    -prefix       Print in prefix expression\n"\
+	"    -sexpression  Print in S-expression\n"
 
 
-#define developing 1
+//#define developing 1
 
 /* === config */
 
