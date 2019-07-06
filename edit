@@ -1,0 +1,4 @@
+#!/bin/bash
+
+vim ./main.c ./libpt24/libpt24.c ./libpt24/libpt24.h ./build ./edit
+

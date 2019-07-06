@@ -1,24 +1,25 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#define OFMT_DEFAULT 0
-#define OFMT_PARENTHESIS 1
-#define OFMT_PREFIX 2
-#define OFMT_POSTFIX 3
-#define OFMT_SEXPRESSION 4
+#include <libpt24/libpt24.h>
 
-#define CONFIG_NOERR 0
+/* #define CONFIG_NOERR 0 */
 // starts from 1.
-#define CONFIG_ERR_ARG_NOT_ENOUGH 1
-#define CONFIG_ARR_ARG_UNREGONIZABLE 2
 
-char EXPR_TYPES[5][8] = {
-	"fffxxxx",
-	"fxfxfxx",
-	"fxfxfxx", // TODO
-	"fxfxfxx", //
-	"fxfxfxx", //
-};
+#define ERR_CONFIG_ARG_NOT_ENOUGH 1
+#define ERR_CONFIG_ARG_UNREGONIZABLE 2
+#define ERR_EXPR_TOO_LONG 3
+
+#define PT24_HELP\
+	"Help string.\n"\
+	"Another line.\n"\
+	"End of help.\n"
+
+
+#define developing 1
+
+/* === config */
 
 struct config {
 	char *xxarg; // unregonized argument
@@ -26,7 +27,7 @@ struct config {
 	int h;
 	int v;
 	int ofmt;
-	int a, b, c, d;
+	long a[4];
 };
 
 // return err code.
@@ -35,152 +36,126 @@ int config_parse_from_args(
 	int argc,
 	char **argv
 ) {
-	return CONFIG_NOERR;
+	int num_off;
+	long nums[4];
+	char *endptr[1];
+	int i;
+
+	explicit_bzero(this, sizeof(struct config));
+
+	if (argc <= 1) {
+		return ERR_CONFIG_ARG_NOT_ENOUGH;
+	}
+
+	if (argv[1][0] == '-') {
+		if (strcmp(argv[1], "-h") == 0) {
+			this->h = 1;
+			return 0;
+		}
+
+		if (strcmp(argv[1], "-v") == 0) {
+			this->v = 1;
+			return 0;
+		}
+
+		/* a.out -ofmt a b c d => argc == 6 */
+		if (argc < 6) {
+			return ERR_CONFIG_ARG_NOT_ENOUGH;
+		}
+
+		if (strcmp(argv[1], "-prefix") == 0) {
+			this->ofmt = OFMT_PREFIX;
+		} else if (strcmp(argv[1], "-postfix") == 0) {
+			this->ofmt = OFMT_POSTFIX;
+		} else if (strcmp(argv[1], "-parenthesis") == 0) {
+			this->ofmt = OFMT_PARENTHESIS;
+		} else if (strcmp(argv[1], "-sexpression") == 0) {
+			this->ofmt = OFMT_SEXPRESSION;
+		} else {
+			this->xxarg = argv[1];
+			return ERR_CONFIG_ARG_UNREGONIZABLE;
+		}
+
+		num_off = 2;
+	} else {
+		if (argc < 5) {
+			return ERR_CONFIG_ARG_NOT_ENOUGH;
+		}
+
+		num_off = 1;
+	}
+
+	/* Reading numbers */
+	for (i = 0; i < 4; i++) {
+		this->a[i] = strtol(argv[num_off + i], endptr, 10);
+		if (**endptr != '\0') {
+			this->xxarg = argv[num_off + i];
+			return ERR_CONFIG_ARG_UNREGONIZABLE;
+		}
+
+	}
+
+	return 0;
 }
 
-void conf_print_err(
+/* For debugging use only */
+#if developing
+void config_print(
+	struct config *conf
+) {
+	char *ofmt_strings[5] = {
+		"OFMT_DEFAULT",
+		"OFMT_PARENTHESIS",
+		"OFMT_PREFIX",
+		"OFMT_POSTFIX",
+		"OFMT_SEXPRESSION"
+	};
+
+	printf(
+		"struct config {\n"
+		"    xxarg : %s\n"
+		"    h, v  : %d, %d\n"
+		"    ofmt  : %s\n"
+		"\n"
+		"    a, b, c, d: %ld, %ld, %ld, %ld\n"
+		"}\n",
+
+		conf->xxarg,
+		conf->h, conf->v,
+		ofmt_strings[conf->ofmt],
+		conf->a[0], conf->a[1], conf->a[2], conf->a[3]
+	);
+}
+#endif
+
+void config_print_err(
 	struct config *this,
 	int err_code
 ) {
-}
-
-struct fraction {
-	int numerator;
-	int denominator;
-};
-
-int fraction_add(
-	const struct fraction *f1,
-	const struct fraction *f2,
-	struct fraction *res
-) {
-	return 0;
-}
-
-int fraction_sub(
-	const struct fraction *f1,
-	const struct fraction *f2,
-	struct fraction *res
-) {
-	return 0;
-}
-
-int fraction_mul(
-	const struct fraction *f1,
-	const struct fraction *f2,
-	struct fraction *res
-) {
-	return 0;
-}
-
-int fraction_div(
-	const struct fraction *f1,
-	const struct fraction *f2,
-	struct fraction *res
-) {
-	return 0;
-}
-
-int fraction_op(
-	char op,
-	struct fraction *this,
-	struct fraction *that
-) {
-	switch (op) {
-	case '+':
-	case '-':
-	case '*':
-	case '/':
-		break;
-	}
-
-	return 0;
-}
-
-struct expression {
-	char type[8]; // type[7] == 0 for all expression
-	char f[3]; // either '+', '-', '*', or '/'
-	int a[4]; // a1, a2, a3, a4
-};
-
-// 0, .. , 4
-int expression_set_type_by_idx(struct expression *this, int idx) {
-	int i;
-
-	if (!(idx >= 0 && idx <= 5)) {
-		return -1;
-	}
-
-	for (i = 0; i < 8; i++) {
-		this->type[i] = EXPR_TYPES[idx][i];
-	}
-
-	return 0;
-}
-
-
-int expression_calculate(
-	struct expression *this,
-	struct fraction *result
-) {
-}
-
-int expression_is24(
-	struct expression *this
-) {
-	for (i = 0; i <= 5; i++) {
-		if (strcmp(EXPR_TYPES[i], this->type) == 0) {
+	if (err_code) {
+		switch (err_code) {
+		case ERR_CONFIG_ARG_NOT_ENOUGH:
+			fprintf(stderr, "ERROR: Too few argument.\n");
+			break;
+		case ERR_CONFIG_ARG_UNREGONIZABLE:
+			fprintf(
+				stderr,
+				"ERROR: Unregonizable argument: %s\n",
+				this->xxarg
+			);
+			break;
 		}
 	}
-	return 0; // Not 24. Dummy
 }
 
-int expression_print_to_buf(
-	struct expression *this,
-	char *buf,
-	int ofmt
-) {
-	switch (ofmt) {
+/* === pt24_command_line */
 
-	case OFMT_DEFAULT:
-
-	case OFMT_PARENTHESIS:
-
-	case OFMT_PREFIX:
-
-	case OFMT_POSTFIX:
-
-	case OFMT_SEXPRESSION:
-		break;
-	}
-
-	return 0;
-}
-
-/* === pt24 */
-
-int pt24_find_solution(
-	const struct config *c,
-	struct expression *expr
-) {
-	expr->a[0] = c->a;
-	expr->a[1] = c->b;
-	expr->a[2] = c->c;
-	expr->a[3] = c->d;
-
-	return 1;
-}
-
-void pt24_print_help() {
-	printf(
-		"This is a help string.\n"
-		"This is another help string.\n"
-		"This is the last help string.\n"
-	);
+void pt24_print_help(FILE *o) {
+	fprintf(o, "%s\n", PT24_HELP);
 }
 
 void pt24_print_version() {
-	printf("0.0.1");
+	printf("%s\n", PT24_VERSION);
 }
 
 int main(
@@ -188,16 +163,22 @@ int main(
 	char **argv
 ) {
 	struct config conf;
+	char expr_str[128] = {0};
 
 	int conf_err = config_parse_from_args(&conf, argc, argv);
 
+#if developing
+	config_print(&conf);
+#endif
+
 	if (conf_err) {
 		config_print_err(&conf, conf_err);
+		pt24_print_help(stderr);
 		return 2;
 	}
 
 	if (conf.h) {
-		pt24_print_help();
+		pt24_print_help(stdout);
 		return 0;
 	}
 
@@ -206,8 +187,17 @@ int main(
 		return 0;
 	}
 
+	switch (libpt24_find_solution(conf.a, expr_str, 128, conf.ofmt)) {
+	case -1:
+		fprintf(stderr, "WARNING: Expression too long.\n");
+		return -1;
+	case 0:
+		printf("No solution.\n");
+		break;
+	case 1:
+		printf("%s\n", expr_str);
+		break;
+	}
 
-
-	
 	return 0;
 }
