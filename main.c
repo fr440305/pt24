@@ -155,7 +155,7 @@ void pt24_print_help(FILE *o) {
 }
 
 void pt24_print_version() {
-	printf("%s\n", PT24_VERSION);
+	printf("%s\n", LIBPT24_VERSION);
 }
 
 int main(

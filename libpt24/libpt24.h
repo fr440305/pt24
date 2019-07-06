@@ -9,7 +9,7 @@
 #define OFMT_POSTFIX 3
 #define OFMT_SEXPRESSION 4
 
-#define PT24_VERSION "0.0.1"
+#define LIBPT24_VERSION "0.0.1"
 
 /* if no solution, return 0. if buffer overflow, return -1. if it works, return 1. */
 int libpt24_find_solution(
