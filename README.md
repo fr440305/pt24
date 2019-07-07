@@ -12,3 +12,5 @@ How: `./build`
 ./a.out -parenthesis 2 2 3 3
 ./a.out -h # Show helps
 ```
+
+See ./screenshot.png for output.
