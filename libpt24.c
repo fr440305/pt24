@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libpt24/libpt24.h>
+#include "libpt24.h"
 
 
 char EXPR_TYPES[5][8] = {
@@ -306,7 +306,20 @@ int expression_print_to_buf( // TODO
 
 	case OFMT_POSTFIX: return -1;
 
-	case OFMT_SEXPRESSION: return -1;
+	case OFMT_SEXPRESSION:
+		if (strcmp(this->type, "ffxxfxx") == 0) {
+			sprintf(buf, "(%c (%c %ld %ld) (%c %ld %ld))", f, g, a, b, h, c, d);
+		} else if (strcmp(this->type, "fffxxxx") == 0) {
+			sprintf(buf, "(%c (%c (%c %ld %ld) %ld) %ld)", f, g, h, a, b, c, d);
+		} else if (strcmp(this->type, "ffxfxxx") == 0) {
+			sprintf(buf, "(%c (%c %ld (%c %ld %ld)) %ld)", f, g, a, h, b, c, d);
+		} else if (strcmp(this->type, "fxffxxx") == 0) {
+			sprintf(buf, "(%c %ld (%c (%c %ld %ld) %ld))", f, a, g, h, b, c, d);
+		} else if (strcmp(this->type, "fxfxfxx") == 0) {
+			sprintf(buf, "(%c %ld (%c %ld (%c %ld %ld)))", f, a, g, b, h, c, d);
+		}
+		return 0;
+
 	}
 
 	return 0;

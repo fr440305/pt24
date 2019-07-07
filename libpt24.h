@@ -11,7 +11,7 @@
 
 #define LIBPT24_VERSION "0.0.1"
 
-/* if no solution, return 0. if buffer overflow, return -1. if it works, return 1. */
+/* if no solution, return 0. if buffer overflows, return -1. if success, return 1. */
 int libpt24_find_solution(
 	long a[4],
 	char *buf,

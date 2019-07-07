@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libpt24/libpt24.h>
+#include "libpt24.h"
 
 /* #define CONFIG_NOERR 0 */
 #define ERR_CONFIG_ARG_NOT_ENOUGH 1
