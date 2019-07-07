@@ -1,5 +1,5 @@
-#ifndef _libpt24_pt24_h_
-#define _libpt24_pt24_h_
+#ifndef _libpt24_h_
+#define _libpt24_h_
 
 #define OFMT_DEFAULT 0
 //#define OFMT_DEFAULT 2
