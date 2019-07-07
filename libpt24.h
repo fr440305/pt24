@@ -1,9 +1,7 @@
-#ifndef _libpt24_h_
-#define _libpt24_h_
+#ifndef _LIBPT24_H_
+#define _LIBPT24_H_
 
 #define OFMT_DEFAULT 0
-//#define OFMT_DEFAULT 2
-
 #define OFMT_PARENTHESIS 1
 #define OFMT_PREFIX 2
 #define OFMT_POSTFIX 3

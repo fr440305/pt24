@@ -4,7 +4,6 @@
 
 #include "libpt24.h"
 
-
 char EXPR_TYPES[5][8] = {
 	"ffxxfxx",
 	"fffxxxx",
@@ -12,6 +11,12 @@ char EXPR_TYPES[5][8] = {
 	"fxffxxx",
 	"fxfxfxx"
 };
+
+char *EXPR_TYPE_FFXXFXX = EXPR_TYPES[0];
+char *EXPR_TYPE_FFFXXXX = EXPR_TYPES[1];
+char *EXPR_TYPE_FFXFXXX = EXPR_TYPES[2];
+char *EXPR_TYPE_FXFFXXX = EXPR_TYPES[3];
+char *EXPR_TYPE_FXFXFXX = EXPR_TYPES[4];
 
 /* === fraction */
 
@@ -119,15 +124,15 @@ int expression_calculate(
 	struct fraction c = fraction_new(this->a[2]);
 	struct fraction d = fraction_new(this->a[3]);
 
-	if (strcmp(this->type, "ffxxfxx") == 0) {
+	if (this->type == EXPR_TYPE_FFXXFXX) {
 		*result = fraction_op(f, fraction_op(g, a, b), fraction_op(h, c, d));
-	} else if (strcmp(this->type, "fffxxxx") == 0) {
+	} else if (this->type == EXPR_TYPE_FFFXXXX) {
 		*result = fraction_op(f, fraction_op(g, fraction_op(h, a, b), c), d);
-	} else if (strcmp(this->type, "ffxfxxx") == 0) {
+	} else if (this->type == EXPR_TYPE_FFXFXXX) {
 		*result = fraction_op(f, fraction_op(g, a, fraction_op(h, b, c)), d);
-	} else if (strcmp(this->type, "fxffxxx") == 0) {
+	} else if (this->type == EXPR_TYPE_FXFFXXX) {
 		*result = fraction_op(f, a, fraction_op(g, fraction_op(h, b, c), d));
-	} else if (strcmp(this->type, "fxfxfxx") == 0) {
+	} else if (this->type == EXPR_TYPE_FXFXFXX) {
 		*result = fraction_op(f, a, fraction_op(g, b, fraction_op(h, c, d)));
 	} else {
 		printf(
@@ -142,7 +147,7 @@ int expression_calculate(
 	return 0;
 }
 
-void expression_print(const struct expression *this) {
+void expression_print(const struct expression *this) { // XXX
 	struct fraction result;
 	expression_calculate(this, &result);
 
@@ -274,37 +279,44 @@ int expression_print_to_buf( // TODO
 
 	switch (ofmt) {
 
-	case OFMT_DEFAULT: return -1; /* Not finished yet */
+	case OFMT_DEFAULT: return -1; /* Not finished yet */ // TODO
 
 	case OFMT_PARENTHESIS:
-		if (strcmp(this->type, "ffxxfxx") == 0) {
+		if (this->type == EXPR_TYPE_FFXXFXX) {
 			sprintf(buf, "((%ld %c %ld) %c (%ld %c %ld))", a, g, b, f, c, h, d);
-		} else if (strcmp(this->type, "fffxxxx") == 0) {
+		} else if (this->type == EXPR_TYPE_FFFXXXX) {
 			sprintf(buf, "(((%ld %c %ld) %c %ld) %c %ld)", a, h, b, g, c, f, d);
-		} else if (strcmp(this->type, "ffxfxxx") == 0) {
+		} else if (this->type == EXPR_TYPE_FFXFXXX) {
 			sprintf(buf, "((%ld %c (%ld %c %ld)) %c %ld)", a, g, b, h, c, f, d);
-		} else if (strcmp(this->type, "fxffxxx") == 0) {
+		} else if (this->type == EXPR_TYPE_FXFFXXX) {
 			sprintf(buf, "(%ld %c ((%ld %c %ld) %c %ld))", a, f, b, h, c, g, d);
-		} else if (strcmp(this->type, "fxfxfxx") == 0) {
+		} else if (this->type == EXPR_TYPE_FXFXFXX) {
 			sprintf(buf, "(%ld %c (%ld %c (%ld %c %ld)))", a, f, b, g, c, h, d);
 		}
 		return 0;
 
 	case OFMT_PREFIX:
-		if (strcmp(this->type, "ffxxfxx") == 0) {
+		if (this->type == EXPR_TYPE_FFXXFXX) {
 			sprintf(buf, "%c %c %ld %ld %c %ld %ld", f, g, a, b, h, c, d);
-		} else if (strcmp(this->type, "fffxxxx") == 0) {
+		} else if (this->type == EXPR_TYPE_FFFXXXX) {
 			sprintf(buf, "%c %c %c %ld %ld %ld %ld", f, g, h, a, b, c, d);
-		} else if (strcmp(this->type, "ffxfxxx") == 0) {
+		} else if (this->type == EXPR_TYPE_FFXFXXX) {
 			sprintf(buf, "%c %c %ld %c %ld %ld %ld", f, g, a, h, b, c, d);
-		} else if (strcmp(this->type, "fxffxxx") == 0) {
+		} else if (this->type == EXPR_TYPE_FXFFXXX) {
 			sprintf(buf, "%c %ld %c %c %ld %ld %ld", f, a, g, h, b, c, d);
-		} else if (strcmp(this->type, "fxfxfxx") == 0) {
+		} else if (this->type == EXPR_TYPE_FXFXFXX) {
 			sprintf(buf, "%c %ld %c %ld %c %ld %ld", f, a, g, b, h, c, d);
 		}
 		return 0;
 
-	case OFMT_POSTFIX: return -1;
+	case OFMT_POSTFIX: return -1 ; // TODO
+		if (this->type == EXPR_TYPE_FFXXFXX) {
+		} else if (this->type == EXPR_TYPE_FFFXXXX) {
+		} else if (this->type == EXPR_TYPE_FFXFXXX) {
+		} else if (this->type == EXPR_TYPE_FXFFXXX) {
+		} else if (this->type == EXPR_TYPE_FXFXFXX) {
+		}
+		return 0;
 
 	case OFMT_SEXPRESSION:
 		if (strcmp(this->type, "ffxxfxx") == 0) {

@@ -1,4 +1,4 @@
 #!/bin/bash
 
-vim ./main.c ./libpt24.c ./libpt24.h ./build ./edit
+vim ./*.h ./*.c ./build ./edit
 
