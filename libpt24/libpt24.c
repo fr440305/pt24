@@ -241,10 +241,10 @@ int expression_find_solution(
 					for (p = 0; p < 24; p++) {
 						this->a = aa[p];
 
-						expression_print(this);
+						//expression_print(this);
 
 						if (expression_is24(this)) {
-							printf("INTERNAL_HINT: Find it!\n");
+							//printf("INTERNAL_HINT: Find it!\n");
 							return 1;
 						}
 					}
@@ -263,18 +263,50 @@ int expression_print_to_buf( // TODO
 	const int cap, /* Buffer capacity */
 	const int ofmt
 ) {
+	long a = this->a[0];
+	long b = this->a[1];
+	long c = this->a[2];
+	long d = this->a[3];
+
+	char f = this->f[0];
+	char g = this->f[1];
+	char h = this->f[2];
+
 	switch (ofmt) {
 
-	case OFMT_DEFAULT: return -2; /* Not finished yet */
+	case OFMT_DEFAULT: return -1; /* Not finished yet */
 
 	case OFMT_PARENTHESIS:
+		if (strcmp(this->type, "ffxxfxx") == 0) {
+			sprintf(buf, "((%ld %c %ld) %c (%ld %c %ld))", a, g, b, f, c, h, d);
+		} else if (strcmp(this->type, "fffxxxx") == 0) {
+			sprintf(buf, "(((%ld %c %ld) %c %ld) %c %ld)", a, h, b, g, c, f, d);
+		} else if (strcmp(this->type, "ffxfxxx") == 0) {
+			sprintf(buf, "((%ld %c (%ld %c %ld)) %c %ld)", a, g, b, h, c, f, d);
+		} else if (strcmp(this->type, "fxffxxx") == 0) {
+			sprintf(buf, "(%ld %c ((%ld %c %ld) %c %ld))", a, f, b, h, c, g, d);
+		} else if (strcmp(this->type, "fxfxfxx") == 0) {
+			sprintf(buf, "(%ld %c (%ld %c (%ld %c %ld)))", a, f, b, g, c, h, d);
+		}
+		return 0;
 
 	case OFMT_PREFIX:
+		if (strcmp(this->type, "ffxxfxx") == 0) {
+			sprintf(buf, "%c %c %ld %ld %c %ld %ld", f, g, a, b, h, c, d);
+		} else if (strcmp(this->type, "fffxxxx") == 0) {
+			sprintf(buf, "%c %c %c %ld %ld %ld %ld", f, g, h, a, b, c, d);
+		} else if (strcmp(this->type, "ffxfxxx") == 0) {
+			sprintf(buf, "%c %c %ld %c %ld %ld %ld", f, g, a, h, b, c, d);
+		} else if (strcmp(this->type, "fxffxxx") == 0) {
+			sprintf(buf, "%c %ld %c %c %ld %ld %ld", f, a, g, h, b, c, d);
+		} else if (strcmp(this->type, "fxfxfxx") == 0) {
+			sprintf(buf, "%c %ld %c %ld %c %ld %ld", f, a, g, b, h, c, d);
+		}
+		return 0;
 
-	case OFMT_POSTFIX:
+	case OFMT_POSTFIX: return -1;
 
-	case OFMT_SEXPRESSION:
-		break;
+	case OFMT_SEXPRESSION: return -1;
 	}
 
 	return 0;
