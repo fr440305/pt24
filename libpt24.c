@@ -279,7 +279,7 @@ int expression_print_to_buf( // TODO
 
 	switch (ofmt) {
 
-	case OFMT_DEFAULT: return -1; /* Not finished yet */ // TODO
+	case OFMT_DEFAULT: /* Not finished yet */ // TODO
 
 	case OFMT_PARENTHESIS:
 		if (this->type == EXPR_TYPE_FFXXFXX) {
