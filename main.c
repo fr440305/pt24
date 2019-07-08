@@ -51,7 +51,7 @@ int config_parse_from_args(
 	int argc,
 	char **argv
 ) {
-	int num_off;
+	int num_off = 1;
 	long nums[4];
 	char *endptr[1];
 	int i;
@@ -62,42 +62,36 @@ int config_parse_from_args(
 		return ERR_CONFIG_ARG_NOT_ENOUGH;
 	}
 
-	if (argv[1][0] == '-') {
-		if (strcmp(argv[1], "-h") == 0) {
-			this->h = 1;
-			return 0;
-		}
+	if (strcmp(argv[1], "-h") == 0) {
+		this->h = 1;
+		return 0;
+	}
 
-		if (strcmp(argv[1], "-v") == 0) {
-			this->v = 1;
-			return 0;
-		}
+	if (strcmp(argv[1], "-v") == 0) {
+		this->v = 1;
+		return 0;
+	}
 
-		/* a.out -ofmt a b c d => argc == 6 */
+	if (argc < 5) {
+		return ERR_CONFIG_ARG_NOT_ENOUGH;
+	}
+	
+	if (strcmp(argv[1], "-prefix") == 0) {
+		this->ofmt = OFMT_PREFIX;
+	} else if (strcmp(argv[1], "-postfix") == 0) {
+		this->ofmt = OFMT_POSTFIX;
+	} else if (strcmp(argv[1], "-parenthesis") == 0) {
+		this->ofmt = OFMT_PARENTHESIS;
+	} else if (strcmp(argv[1], "-sexpression") == 0) {
+		this->ofmt = OFMT_SEXPRESSION;
+	}
+
+	if (this->ofmt) {
+		num_off ++;
+
 		if (argc < 6) {
 			return ERR_CONFIG_ARG_NOT_ENOUGH;
 		}
-
-		if (strcmp(argv[1], "-prefix") == 0) {
-			this->ofmt = OFMT_PREFIX;
-		} else if (strcmp(argv[1], "-postfix") == 0) {
-			this->ofmt = OFMT_POSTFIX;
-		} else if (strcmp(argv[1], "-parenthesis") == 0) {
-			this->ofmt = OFMT_PARENTHESIS;
-		} else if (strcmp(argv[1], "-sexpression") == 0) {
-			this->ofmt = OFMT_SEXPRESSION;
-		} else {
-			this->xxarg = argv[1];
-			return ERR_CONFIG_ARG_UNREGONIZABLE;
-		}
-
-		num_off = 2;
-	} else {
-		if (argc < 5) {
-			return ERR_CONFIG_ARG_NOT_ENOUGH;
-		}
-
-		num_off = 1;
 	}
 
 	/* Reading numbers */
@@ -107,7 +101,6 @@ int config_parse_from_args(
 			this->xxarg = argv[num_off + i];
 			return ERR_CONFIG_ARG_UNREGONIZABLE;
 		}
-
 	}
 
 	return 0;
