@@ -1,4 +1,4 @@
 #!/bin/bash
 
-gcc ./main.c ./libpt24.c -o ~/bin/pt24
+gcc ./main.c ./libpt24.c -o ./pt24
 
