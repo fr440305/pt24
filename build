@@ -1,4 +1,5 @@
 #!/bin/bash
 
-gcc ./main.c ./libpt24.c -o ./pt24
+mkdir -p ./bin
+gcc ./main.c ./libpt24.c -o ./bin/pt24
 

@@ -1,13 +1,194 @@
 <!doctype html>
 <html>
 <head>
+	<meta charset='utf8'>
 
 	<title>24 Game</title>
 
 </head>
 <body>
 
-	<script src='./libpt24.js'> </script>
+<script>
+function Fraction(n) {
+	this.n = n;
+	this.d = 1;
+}
+
+Fraction.prototype.add = function(that, ret) {
+	ret.n = this.n * that.d + that.n * this.d;
+	ret.d = this.d * that.d;
+}
+
+Fraction.prototype.sub= function(that, ret) {
+	ret.n = this.n * that.d - that.n * this.d;
+	ret.d = this.d * that.d;
+}
+
+Fraction.prototype.mul = function(that, ret) {
+	ret.n = this.n * that.n;
+	ret.d = this.d * that.d;
+}
+
+Fraction.prototype.div = function(that, ret) {
+	ret.n = this.n * that.d;
+	ret.d = this.d * that.n;
+}
+
+Fraction.prototype.op = function(operator, that, ret) {
+	switch (operator) {
+	case '+': this.add(that, ret); break;
+	case '-': this.sub(that, ret); break;
+	case '*': this.mul(that, ret); break;
+	case '/': this.div(that, ret); break;
+	default: // SHOULD NOT RUN.
+		console.log('Fraction.op :: Invalid operator. (operator) == (' + operator + ')');
+	}
+}
+
+function fraction_op (f, x, y) {
+	var r = new Fraction(0);
+	x.op(f, y, r);
+	return r;
+}
+
+Fraction.prototype.print = function(el) {
+	console.log(this.n + ' / ' + this.d + ' = ' + (this.n/this.d));
+}
+
+// 5 types.
+var EXP_TYPES = [
+	'ffxxfxx',
+	'fffxxxx',
+	'ffxfxxx',
+	'fxffxxx',
+	'fxfxfxx'
+];
+
+var FFXXFXX = 0;
+var FFFXXXX = 1;
+var FFXFXXX = 2;
+var FXFFXXX = 3;
+var FXFXFXX = 4;
+
+// used by setup_permutations
+var IDXS = [
+	[0, 1, 2, 3],
+	[0, 1, 3, 2],
+	[0, 2, 1, 3],
+	[0, 2, 3, 1],
+	[0, 3, 1, 2],
+	[0, 3, 2, 1],
+
+	[1, 0, 2, 3],
+	[1, 0, 3, 2],
+	[1, 2, 0, 3],
+	[1, 2, 3, 0],
+	[1, 3, 0, 2],
+	[1, 3, 2, 0],
+		
+	[2, 0, 1, 3],
+	[2, 0, 3, 1],
+	[2, 1, 0, 3],
+	[2, 1, 3, 0],
+	[2, 3, 0, 1],
+	[2, 3, 1, 0],
+
+	[3, 0, 1, 2],
+	[3, 0, 2, 1],
+	[3, 1, 0, 2],
+	[3, 1, 2, 0],
+	[3, 2, 0, 1],
+	[3, 2, 1, 0]
+];
+
+function Expression(exptype, operands, operators) {
+	this.tp = (exptype === undefined) ? (0) : (exptype); // 0 .. 4
+	this.x = (operands === undefined) ? ([6, 6, 6, 6]) : (operands); // [4]long
+	this.f = (operators === undefined) ? (['+', '+', '+']) : (operators); // [3]char
+}
+
+// `ret` is a Fraction
+Expression.prototype.calculate = function() {
+	var f = this.f[0];
+	var g = this.f[1];
+	var h = this.f[2];
+	var a = new Fraction(this.x[0]);
+	var b = new Fraction(this.x[1]);
+	var c = new Fraction(this.x[2]);
+	var d = new Fraction(this.x[3]);
+
+	switch (this.tp) {
+	case FFXXFXX: // 0
+		return fraction_op(f, fraction_op(g, a, b), fraction_op(h, c, d));
+	case FFFXXXX: // 1
+		return fraction_op(f, fraction_op(g, fraction_op(h, a, b), c), d);
+	case FFXFXXX: // 2
+		return fraction_op(f, fraction_op(g, a, fraction_op(h, b, c)), d);
+	case FXFFXXX: // 3
+		return fraction_op(f, a, fraction_op(g, fraction_op(h, b, c), d));
+	case FXFXFXX: // 4
+		return fraction_op(f, a, fraction_op(g, b, fraction_op(h, c, d)));
+	default: // SHOULD NOT RUN.
+		console.log('Expression.calculate :: Invalid expression type.');
+	}
+}
+
+Expression.prototype.print = function(el) {
+	// DEBUGGER
+}
+
+Expression.prototype.is24 = function() {
+	var res = this.calculate();
+
+	return (
+		(res.d !== 0) &&
+		(res.n !== 0) &&
+		(res.n % res.d === 0) &&
+		(res.n / res.d === 24)
+	);
+}
+
+Expression.prototype.setup_permutations = function(
+	operands, // [4]int
+) {
+	var permutations = [];
+	for (var i = 0; i < 24; i++) {
+		permutations[i] = [];
+		for (var j = 0; j < 4; j++) {
+			permutations[i][j] = operands[IDXS[i][j]]
+		}
+	}
+
+	return permutations;
+}
+
+Expression.prototype.find_solution = function(a) {
+	var ops = ['+', '-', '*', '/'];
+	var aa = this.setup_permutations(a);
+	var i, j, k, t, p;
+
+	for (i = 0; i < 4; i++) {
+		this.f[0] = ops[i];
+		for (j = 0; j < 4; j++) {
+			this.f[1] = ops[j];
+			for (k = 0; k < 4; k++) {
+				this.f[2] = ops[k];
+				for (p = 0; p < 24; p++) {
+					this.x = aa[p];
+
+					if (this.is24()) {
+						return 1;
+					}
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+</script>
+
 
 </body>
 </html>
