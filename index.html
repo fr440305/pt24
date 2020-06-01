@@ -2,11 +2,35 @@
 <html>
 <head>
 	<meta charset='utf8'>
+<style>
+.main {
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+textarea, button, #result {
+	font-size: 18px;
+	width: 100%;
+}
+
+#p_result {
+	font-family: Courier;
+	text-align: center;
+}
+
+
+</style>
 
 	<title>24 Game</title>
 
 </head>
 <body>
+
+	<div class='main'>
+		<p><textarea placeholder='5,5,3,3' id='txb_input'></textarea></p>
+		<p><button id='btn_go'>Go!</button></p>
+		<p id='p_result'></p>
+	</div>
 
 <script>
 function Fraction(n) {
@@ -108,6 +132,7 @@ function Expression(exptype, operands, operators) {
 }
 
 // `ret` is a Fraction
+// Critical method. More speed-up is required.
 Expression.prototype.calculate = function() {
 	var f = this.f[0];
 	var g = this.f[1];
@@ -207,6 +232,35 @@ Expression.prototype.stringify = function() {
 	return 0;
 }
 
+</script>
+
+<script>
+btn_go.onclick = function() {
+	a = [];
+	tx = txb_input.value;
+	toks = tx.split(/(\s+)/).join(',').split(',');
+	for (var i = 0; i < toks.length; i++) {
+		x = parseInt(toks[i]);
+		if (x) {
+			a.push(x);
+		}
+	}
+
+	if (a.length !== 4) {
+		p_result.innerText = 'Must has only 4 numbers.';
+		return;
+	}
+
+	var xx = new Expression();
+	switch (xx.find_solution(a)) {
+	case 1:
+		p_result.innerText = (xx.stringify() + ' == 24');
+		return;
+	default:
+		p_result.innerText = 'No solution.';
+		return;
+	}
+}
 </script>
 
 
