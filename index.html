@@ -204,11 +204,14 @@ Expression.prototype.find_solution = function(a) {
 			this.f[1] = ops[j];
 			for (k = 0; k < 4; k++) {
 				this.f[2] = ops[k];
-				for (p = 0; p < 24; p++) {
-					this.x = aa[p];
+				for (t = 0; t < 5; t++) {
+					this.tp = t;
+					for (p = 0; p < 24; p++) {
+						this.x = aa[p];
 
-					if (this.is24()) {
-						return 1;
+						if (this.is24()) {
+							return 1;
+						}
 					}
 				}
 			}
