@@ -19,7 +19,7 @@ Fraction.prototype.add = function(that, ret) {
 	ret.d = this.d * that.d;
 }
 
-Fraction.prototype.sub= function(that, ret) {
+Fraction.prototype.sub = function(that, ret) {
 	ret.n = this.n * that.d - that.n * this.d;
 	ret.d = this.d * that.d;
 }
@@ -133,10 +133,6 @@ Expression.prototype.calculate = function() {
 	}
 }
 
-Expression.prototype.print = function(el) {
-	// DEBUGGER
-}
-
 Expression.prototype.is24 = function() {
 	var res = this.calculate();
 
@@ -184,6 +180,30 @@ Expression.prototype.find_solution = function(a) {
 		}
 	}
 
+	return 0;
+}
+
+Expression.prototype.stringify = function() {
+	var a = this.x[0];
+	var b = this.x[1];
+	var c = this.x[2];
+	var d = this.x[3];
+	var f = this.f[0];
+	var g = this.f[1];
+	var h = this.f[2];
+
+	switch (this.tp) {
+	case FFXXFXX: // 0
+		return `((${a} ${g} ${b}) ${f} (${c} ${h} ${d}))`;
+	case FFFXXXX: // 1
+		return `(((${a} ${h} ${b}) ${g} ${c}) ${f} ${d})`;
+	case FFXFXXX: // 2
+		return `((${a} ${g} (${b} ${h} ${c})) ${f} ${d})`;
+	case FXFFXXX: // 3
+		return `(${a} ${f} ((${b} ${h} ${c}) ${g} ${d}))`;
+	case FXFXFXX: // 4
+		return `{${a} ${f} (${b} ${g} (${c} ${h} ${d})))`;
+	}
 	return 0;
 }
 
